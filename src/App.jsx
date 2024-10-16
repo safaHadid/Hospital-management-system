@@ -1,6 +1,7 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import './App.css'
 import Sidebar from './components/Sidebar'
+import Department from './pages/Department'
 
 function App() {
 
@@ -9,7 +10,7 @@ function App() {
     <Router>
     <Sidebar >
       <Routes>
-        
+        <Route path='/' element={<Department />} />
       </Routes>
     </Sidebar>
     </Router>
