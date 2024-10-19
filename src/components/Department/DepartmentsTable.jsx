@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditDepartmentDialog from "./EditDepartmentDialog"; 
@@ -102,7 +102,7 @@ export default function DepartmentsTable() {
                 <StyledTableCell align="center">
                   <Tooltip title="View Details">
                     <IconButton onClick={() => handleDetails(department)}>
-                      <VisibilityIcon />
+                      <AssignmentIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Edit Department">
