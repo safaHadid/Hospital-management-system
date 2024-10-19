@@ -3,6 +3,7 @@ import './App.css'
 import Sidebar from './components/Sidebar'
 import Department from './pages/Department'
 import Doctors from './pages/Doctors'
+import Rooms from './pages/Rooms'
 
 function App() {
 
@@ -13,6 +14,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Department />} />
         <Route path='/doctors' element={<Doctors />} />
+        <Route path='/rooms' element={<Rooms />} />
+
       </Routes>
     </Sidebar>
     </Router>
