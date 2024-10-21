@@ -22,7 +22,8 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import BiotechIcon from '@mui/icons-material/Biotech';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import FolderIcon from "@mui/icons-material/Folder";
 
 const drawerWidth = 240;
@@ -83,7 +84,8 @@ function Sidebar(props) {
       icon: <CalendarTodayIcon />,
       path: "/surgeries",
     },
-    { text: "Services", icon: <MedicalServicesIcon />, path: "/services" },
+    { text: "Laboratory Tests", icon: <BiotechIcon />, path: "/tests" },
+    { text: "Radiographs", icon: <MonitorHeartIcon />, path: "/radiographs" },
     { text: "Patients Records", icon: <FolderIcon />, path: "/records" },
   ];
 
