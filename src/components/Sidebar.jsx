@@ -81,7 +81,7 @@ function Sidebar(props) {
     {
       text: "Surgical Operation Scheduling",
       icon: <CalendarTodayIcon />,
-      path: "/scheduling",
+      path: "/surgeries",
     },
     { text: "Services", icon: <MedicalServicesIcon />, path: "/services" },
     { text: "Patients Records", icon: <FolderIcon />, path: "/records" },
