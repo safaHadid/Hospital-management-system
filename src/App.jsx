@@ -7,6 +7,7 @@ import Rooms from './pages/Rooms'
 import Patients from './pages/Patients'
 import Surgeries from './pages/Surgeries'
 import LabTests from './pages/LabTests'
+import Radiographs from './pages/Radiographs'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
         <Route path='/patients' element={<Patients />} />
         <Route path='/surgeries' element={<Surgeries />} />
         <Route path='/tests' element={<LabTests />} />
+        <Route path='/radiographs' element={<Radiographs />} />
       </Routes>
     </Sidebar>
     </Router>
