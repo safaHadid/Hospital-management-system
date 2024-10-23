@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -16,7 +16,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import PeopleIcon from "@mui/icons-material/People";
@@ -29,47 +28,45 @@ import FolderIcon from "@mui/icons-material/Folder";
 const drawerWidth = 240;
 
 function Sidebar(props) {
-  const { window, children } = props;
+  const { window, children, setIsLoggedIn } = props;
 
-  // State to manage mobile drawer open/close behavior
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // State to manage drawer closing animation
   const [isClosing, setIsClosing] = useState(false);
 
-  // State for managing profile menu open/close
   const [isOpen, setIsOpen] = useState(null);
 
-  // Closes the drawer with a transition
+  const navigate = useNavigate();
+
   const handleDrawerClose = () => {
     setIsClosing(true);
     setMobileOpen(false);
   };
 
-  // Called when drawer close transition ends, to reset closing state
   const handleDrawerTransitionEnd = () => {
     setIsClosing(false);
   };
 
-  // Toggles drawer open/close on mobile
   const handleDrawerToggle = () => {
-    // Prevent opening if the drawer is still in the process of closing
     if (!isClosing) {
       setMobileOpen(!mobileOpen);
     }
   };
 
-  // Opens the profile menu (avatar click)
   const handleMenuOpen = (event) => {
     setIsOpen(event.currentTarget);
   };
 
-  // Closes the profile menu
   const handleMenuClose = () => {
     setIsOpen(null);
   };
 
-  // List of sidebar items
+  const handleLogOut = () => {
+    setIsOpen(null);
+    setIsLoggedIn(false);
+    navigate('/')
+  }
+
   const drawerList = [
     { text: "Departments", icon: <LocalHospitalIcon />, path: "/" },
     { text: "Rooms", icon: <MeetingRoomIcon />, path: "/rooms" },
@@ -89,7 +86,6 @@ function Sidebar(props) {
     { text: "Patients Records", icon: <FolderIcon />, path: "/records" },
   ];
 
-  // Drawer layout
   const drawer = (
     <div>
       <Toolbar />
@@ -123,7 +119,6 @@ function Sidebar(props) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
-      {/* AppBar: Top navigation bar */}
       <AppBar
         position="fixed"
         sx={{
@@ -148,7 +143,6 @@ function Sidebar(props) {
           <IconButton onClick={handleMenuOpen} color="inherit" sx={{ p: 0 }}>
             <Avatar alt="Profile Image" src="" />
           </IconButton>
-          {/* Menu for avatar (logout functionality) */}
           <Menu
             open={Boolean(isOpen)}
             onClose={handleMenuClose}
@@ -162,7 +156,7 @@ function Sidebar(props) {
               horizontal: "right",
             }}
           >
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={handleLogOut}>Logout</MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
@@ -172,7 +166,6 @@ function Sidebar(props) {
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
-        {/* Mobile drawer */}
         <Drawer
           container={container}
           variant="temporary"
@@ -193,7 +186,6 @@ function Sidebar(props) {
           {drawer}
         </Drawer>
 
-        {/* Permanent drawer for larger screens */}
         <Drawer
           variant="permanent"
           sx={{
