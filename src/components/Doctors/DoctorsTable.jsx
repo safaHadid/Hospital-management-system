@@ -27,6 +27,7 @@ const mockDoctors = [
     department_name: "Cardiology",
     gender: "Male",
     salary: "$200,000",
+    shift: "Morning",
     date_of_birth: "1985-05-15",
   },
   {
@@ -40,6 +41,7 @@ const mockDoctors = [
     department_name: "Neurology",
     gender: "Female",
     salary: "$180,000",
+    shift: "Night",
     date_of_birth: "1990-03-22",
   },
 ];
@@ -130,7 +132,7 @@ export default function DoctorsTable() {
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Specialization</StyledTableCell>
               <StyledTableCell>Department</StyledTableCell>
-              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Shift</StyledTableCell>
               <StyledTableCell>Phone</StyledTableCell>
               <StyledTableCell>Address</StyledTableCell>
               <StyledTableCell>Action</StyledTableCell>
@@ -144,7 +146,7 @@ export default function DoctorsTable() {
                 </StyledTableCell>
                 <StyledTableCell>{doctor.specialization}</StyledTableCell>
                 <StyledTableCell>{doctor.department_name}</StyledTableCell>
-                <StyledTableCell>{doctor.email}</StyledTableCell>
+                <StyledTableCell>{doctor.shift}</StyledTableCell>
                 <StyledTableCell>{doctor.phone}</StyledTableCell>
                 <StyledTableCell>{doctor.address}</StyledTableCell>
                 <StyledTableCell align="center">

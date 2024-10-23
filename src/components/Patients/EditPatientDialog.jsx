@@ -11,6 +11,8 @@ import {
   Checkbox,
 } from "@mui/material";
 
+const roomNumbers = [100 , 101 , 200 , 201 , 300 , 301];
+
 const EditPatientDialog = ({
   open,
   handleClose,
@@ -20,6 +22,7 @@ const EditPatientDialog = ({
 }) => {
   const [firstName, setFirstName] = useState(patient.first_name);
   const [lastName, setLastName] = useState(patient.last_name);
+  const [idNumber, setIdNumber] = useState(patient.id_card_number);
   const [phone, setPhone] = useState(patient.phone);
   const [address, setAddress] = useState(patient.address);
   const [dateOfBirth, setDateOfBirth] = useState(patient.date_of_birth);
@@ -48,6 +51,13 @@ const EditPatientDialog = ({
           label="Last Name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
+          fullWidth
+          margin="dense"
+        />
+        <TextField
+          label="ID Card Number"
+          value={idNumber}
+          onChange={(e) => setIdNumber(e.target.value)}
           fullWidth
           margin="dense"
         />
@@ -87,31 +97,15 @@ const EditPatientDialog = ({
         </TextField>
         <TextField
           select
-          label="Department"
-          value={departmentName}
-          onChange={(e) => setDepartmentName(e.target.value)}
-          fullWidth
-          margin="dense"
-        >
-          {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.name}>
-              {dept.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          select
           label="Room"
           value={room}
           onChange={(e) => setRoom(e.target.value)}
           fullWidth
           margin="dense"
         >
-          {departments
-            .find((department) => department.name === departmentName)
-            ?.rooms.map((room, index) => (
-              <MenuItem key={index} value={room.roomNumber}>
-                {room.roomNumber}
+          {roomNumbers.map((room, index) => (
+              <MenuItem key={index} value={room}>
+                {room}
               </MenuItem>
             ))}
         </TextField>

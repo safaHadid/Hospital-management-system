@@ -5,14 +5,12 @@ const EditRoomDialog = ({ open, handleClose, room, departments, handleSave }) =>
   const [roomNumber, setRoomNumber] = useState(room.room_number);
   const [roomType, setRoomType] = useState(room.room_type);
   const [roomStatus, setRoomStatus] = useState(room.status);
-  const [bedsNumber, setBedsNumber] = useState(room.number_of_beds);
   const [departmentName, setDepartmentName] = useState(room.department_name);
 
   const handleSaveClick = () => {
     console.log("Room Number:", roomNumber);
     console.log("Room Type:", roomType);
     console.log("Room Status:", roomStatus);
-    console.log("Number of Beds:", bedsNumber);
     console.log("Department Name:", departmentName);
     handleClose();
   };
@@ -53,15 +51,6 @@ const EditRoomDialog = ({ open, handleClose, room, departments, handleSave }) =>
             <MenuItem value="Under Maintenance">Under Maintenance</MenuItem>
           </Select>
         </FormControl>
-
-        <TextField
-          margin="dense"
-          type='number'
-          label="Number of Beds"
-          fullWidth
-          value={bedsNumber}
-          onChange={(e) => setBedsNumber(e.target.value)}
-        />
 
         <FormControl fullWidth margin="dense">
           <InputLabel>Department</InputLabel>

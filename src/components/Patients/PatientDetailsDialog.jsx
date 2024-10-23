@@ -21,6 +21,12 @@ const PatientDetailsDialog = ({ open, handleClose, patient }) => {
               <strong>Name:</strong> {patient.first_name} {patient.last_name}
             </Typography>
           </Grid>
+
+          <Grid item xs={12}>
+            <Typography variant="body1" color="textSecondary">
+              <strong>ID Card Number:</strong> {patient.id_card_number}
+            </Typography>
+          </Grid>
           
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
@@ -40,11 +46,6 @@ const PatientDetailsDialog = ({ open, handleClose, patient }) => {
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
               <strong>Date of Birth:</strong> {patient.date_of_birth}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1" color="textSecondary">
-              <strong>Department:</strong> {patient.department}
             </Typography>
           </Grid>
           <Grid item xs={12}>

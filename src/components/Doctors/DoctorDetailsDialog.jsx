@@ -28,6 +28,11 @@ const DoctorDetailsDialog = ({ open, handleClose, doctor }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
+              <strong>Shift:</strong> {doctor.shift}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1" color="textSecondary">
               <strong>Email:</strong> {doctor.email}
             </Typography>
           </Grid>

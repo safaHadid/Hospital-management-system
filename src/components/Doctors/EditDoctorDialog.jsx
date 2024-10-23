@@ -4,6 +4,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, M
 const EditDepartmentDialog = ({ open, handleClose, doctor, departments, handleSave }) => {
   const [firstName, setFirstName] = useState(doctor.first_name);
   const [lastName, setLastName] = useState(doctor.last_name);
+  const [shift, setShift] = useState(doctor.shift);
   const [email, setEmail] = useState(doctor.email);
   const [phone, setPhone] = useState(doctor.phone);
   const [address, setAddress] = useState(doctor.address);
@@ -17,6 +18,7 @@ const EditDepartmentDialog = ({ open, handleClose, doctor, departments, handleSa
     handleSave({
       firstName,
       lastName,
+      shift,
       email,
       password,
       phone,
@@ -50,6 +52,17 @@ const EditDepartmentDialog = ({ open, handleClose, doctor, departments, handleSa
           fullWidth
           margin="dense"
         />
+        <TextField
+          select
+          label="Shift"
+          value={shift}
+          onChange={(e) => setShift(e.target.value)}
+          fullWidth
+          margin="dense"
+        >
+          <MenuItem value="Morning">Morning</MenuItem>
+          <MenuItem value="Night">Night</MenuItem>
+        </TextField>
         <TextField
           label="Email"
           value={email}

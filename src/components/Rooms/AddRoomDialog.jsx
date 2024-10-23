@@ -72,14 +72,6 @@ const AddRoomDialog = ({ open, handleClose, departments }) => {
           </Select>
         </FormControl>
 
-        <TextField
-          margin="dense"
-          label="Number of Beds"
-          fullWidth
-          value={bedsNumber}
-          onChange={(e) => setBedsNumber(e.target.value)}
-        />
-
         <FormControl fullWidth margin="dense">
           <InputLabel>Department</InputLabel>
           <Select

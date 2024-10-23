@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
+
+const roomNumbers = [100 , 101 , 200 , 201 , 300 , 301];
+
+
 const AddPatientDialog = ({ open, handleClose, departments }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [idNumber, setIdNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
@@ -57,6 +62,13 @@ const AddPatientDialog = ({ open, handleClose, departments }) => {
         />
         <TextField
           margin="dense"
+          label="ID Card Number"
+          fullWidth
+          value={idNumber}
+          onChange={(e) => setIdNumber(e.target.value)}
+        />
+        <TextField
+          margin="dense"
           label="Phone"
           fullWidth
           value={phone}
@@ -89,28 +101,14 @@ const AddPatientDialog = ({ open, handleClose, departments }) => {
           </Select>
         </FormControl>
         <FormControl fullWidth margin="dense">
-          <InputLabel>Department</InputLabel>
-          <Select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-          >
-            {departments.map((department) => (
-              <MenuItem key={department.id} value={department.id}>
-                {department.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth margin="dense">
           <InputLabel>Room</InputLabel>
           <Select
             value={room}
             onChange={(e) => setRoom(e.target.value)}
-            disabled={filteredRooms.length === 0}
           >
-            {filteredRooms.map((room, index) => (
-              <MenuItem key={index} value={room.roomNumber} disabled={room.status === "Occupied" || room.status === "Under Maintenance"}>
-                Room {room.roomNumber} - {room.type} ({room.status})
+          {roomNumbers.map((room, index) => (
+              <MenuItem key={index} value={room}>
+                {room}
               </MenuItem>
             ))}
           </Select>

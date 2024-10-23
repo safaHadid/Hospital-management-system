@@ -44,6 +44,7 @@ const mockPatients = [
     gender: "Male",
     department: "Cardiology",
     room: 101,
+    id_card_number: "ID123456",
   },
   {
     id: 2,
@@ -55,6 +56,7 @@ const mockPatients = [
     gender: "Female",
     department: "Neurology",
     room: 201,
+    id_card_number: "ID789012",
   },
   {
     id: 3,
@@ -66,6 +68,7 @@ const mockPatients = [
     gender: "Female",
     department: "Oncology",
     room: 302,
+    id_card_number: "ID345678",
   },
   {
     id: 4,
@@ -77,6 +80,7 @@ const mockPatients = [
     gender: "Male",
     department: "Pediatrics",
     room: 401,
+    id_card_number: "ID901234",
   },
   {
     id: 5,
@@ -88,61 +92,7 @@ const mockPatients = [
     gender: "Female",
     department: "Orthopedics",
     room: 502,
-  },
-  {
-    id: 6,
-    first_name: "James",
-    last_name: "Wilson",
-    phone: "555-3210",
-    address: "135 Cedar Ln, Springfield",
-    date_of_birth: "1988-03-18",
-    gender: "Male",
-    department: "Dermatology",
-    room: 601,
-  },
-  {
-    id: 7,
-    first_name: "Sophia",
-    last_name: "Miller",
-    phone: "555-2468",
-    address: "789 Elm St, Springfield",
-    date_of_birth: "1984-09-26",
-    gender: "Female",
-    department: "Radiology",
-    room: 701,
-  },
-  {
-    id: 8,
-    first_name: "Liam",
-    last_name: "Martinez",
-    phone: "555-1357",
-    address: "135 Spruce St, Springfield",
-    date_of_birth: "1992-11-15",
-    gender: "Male",
-    department: "Gastroenterology",
-    room: 802,
-  },
-  {
-    id: 9,
-    first_name: "Charlotte",
-    last_name: "Garcia",
-    phone: "555-3698",
-    address: "789 Poplar Dr, Springfield",
-    date_of_birth: "1986-04-25",
-    gender: "Female",
-    department: "Emergency Medicine",
-    room: 901,
-  },
-  {
-    id: 10,
-    first_name: "Benjamin",
-    last_name: "Clark",
-    phone: "555-9753",
-    address: "456 Pine Rd, Springfield",
-    date_of_birth: "1991-01-12",
-    gender: "Male",
-    department: "Endocrinology",
-    room: 1003,
+    id_card_number: "ID567890",
   },
 ];
 
@@ -206,7 +156,6 @@ const PatientsTable = ({departments}) => {
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Date of Birth</StyledTableCell>
               <StyledTableCell>Gender</StyledTableCell>
-              <StyledTableCell>Department</StyledTableCell>
               <StyledTableCell>Room</StyledTableCell>
               <StyledTableCell>Actions</StyledTableCell>
             </TableRow>
@@ -217,7 +166,6 @@ const PatientsTable = ({departments}) => {
                 <StyledTableCell>{patient.first_name} {patient.last_name}</StyledTableCell>
                 <StyledTableCell>{patient.date_of_birth}</StyledTableCell>
                 <StyledTableCell>{patient.gender}</StyledTableCell>
-                <StyledTableCell>{patient.department}</StyledTableCell>
                 <StyledTableCell>{patient.room}</StyledTableCell>
                 <StyledTableCell>
                 <Tooltip title="View Details">

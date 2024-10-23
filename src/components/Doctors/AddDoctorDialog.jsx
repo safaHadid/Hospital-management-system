@@ -15,6 +15,7 @@ import {
 const AddDoctorDialog = ({ open, handleClose, departments }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [shift, setShift] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -29,6 +30,7 @@ const AddDoctorDialog = ({ open, handleClose, departments }) => {
     const doctorData = {
       firstName,
       lastName,
+      shift,
       email,
       password,
       phone,
@@ -62,6 +64,17 @@ const AddDoctorDialog = ({ open, handleClose, departments }) => {
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
         />
+        <TextField
+          select
+          label="Shift"
+          value={shift}
+          onChange={(e) => setShift(e.target.value)}
+          fullWidth
+          margin="dense"
+        >
+          <MenuItem value="Morning">Morning</MenuItem>
+          <MenuItem value="Night">Night</MenuItem>
+        </TextField>
         <TextField
           margin="dense"
           label="Email"

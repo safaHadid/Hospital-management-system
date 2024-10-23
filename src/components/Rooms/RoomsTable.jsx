@@ -9,20 +9,49 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RoomDetailsDialog from "./RoomDetailsDialog";
 import EditRoomDialog from "./EditRoomDialog";
 
 const mockRooms = [
-  { id: 1, room_number: 101, room_type: "ICU", department_name: "Cardiology", number_of_beds:4, status: "Available" },
-  { id: 2, room_number: 102, room_type: "Shared", department_name: "Neurology", number_of_beds:4, status: "Occupied" },
-  { id: 3, room_number: 103, room_type: "ICU", department_name: "Pediatrics", number_of_beds:2, status: "Available" },
-  { id: 4, room_number: 104, room_type: "Shared", department_name: "Oncology", number_of_beds:4, status: "Under Maintenance" },
-  { id: 5, room_number: 105, room_type: "Private", department_name: "Orthopedics", number_of_beds:1, status: "Occupied" },
+  {
+    id: 1,
+    room_number: 101,
+    room_type: "ICU",
+    department_name: "Cardiology",
+    status: "Available",
+  },
+  {
+    id: 2,
+    room_number: 102,
+    room_type: "Shared",
+    department_name: "Neurology",
+    status: "Occupied",
+  },
+  {
+    id: 3,
+    room_number: 103,
+    room_type: "ICU",
+    department_name: "Pediatrics",
+    status: "Available",
+  },
+  {
+    id: 4,
+    room_number: 104,
+    room_type: "Shared",
+    department_name: "Oncology",
+    status: "Under Maintenance",
+  },
+  {
+    id: 5,
+    room_number: 105,
+    room_type: "Private",
+    department_name: "Orthopedics",
+    status: "Occupied",
+  },
 ];
-
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -42,7 +71,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function RoomsTable({departments}) {
+export default function RoomsTable({ departments }) {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -80,14 +109,16 @@ export default function RoomsTable({departments}) {
 
   return (
     <>
-      <TableContainer component={Paper} style={{ width: "100%", overflowX: "auto" }}>
+      <TableContainer
+        component={Paper}
+        style={{ width: "100%", overflowX: "auto" }}
+      >
         <Table aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell>Room Number</StyledTableCell>
               <StyledTableCell align="right">Room Type</StyledTableCell>
               <StyledTableCell align="right">Department Name</StyledTableCell>
-              <StyledTableCell align="right">Number Of Beds</StyledTableCell>
               <StyledTableCell align="right">Status</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
@@ -95,11 +126,32 @@ export default function RoomsTable({departments}) {
           <TableBody>
             {rooms.map((room) => (
               <StyledTableRow key={room.id}>
-                <StyledTableCell align="right">{room.room_number}</StyledTableCell>
-                <StyledTableCell align="right">{room.room_type}</StyledTableCell>
-                <StyledTableCell align="right">{room.department_name}</StyledTableCell>
-                <StyledTableCell align="right">{room.number_of_beds}</StyledTableCell>
-                <StyledTableCell align="right">{room.status}</StyledTableCell>
+                <StyledTableCell align="right">
+                  {room.room_number}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {room.room_type}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {room.department_name}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <span
+                    style={{
+                      color:
+                        room.status === "Available"
+                          ? "green"
+                          : room.status === "Occupied"
+                          ? "blue"
+                          : room.status === "Under Maintenance"
+                          ? "orange"
+                          : "black",
+                    }}
+                  >
+                    {room.status}
+                  </span>
+                </StyledTableCell>
+
                 <StyledTableCell align="center">
                   <Tooltip title="View Details">
                     <IconButton onClick={() => handleDetails(room)}>
@@ -107,12 +159,18 @@ export default function RoomsTable({departments}) {
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Edit Room">
-                    <IconButton color="primary" onClick={() => handleEdit(room)}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleEdit(room)}
+                    >
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete Room">
-                    <IconButton color="error" onClick={() => handleDelete(room.id)}>
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDelete(room.id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
