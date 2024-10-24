@@ -10,9 +10,10 @@ import LabTests from './pages/LabTests'
 import Radiographs from './pages/Radiographs'
 import Login from './pages/Login'
 import { useState } from 'react'
+import PatientsRecords from './pages/PatientsRecords'
 
 function App() {
-  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const [isLoggedIn,setIsLoggedIn] = useState(true);
 
   return (
     <>
@@ -31,6 +32,7 @@ function App() {
             <Route path='/surgeries' element={<Surgeries/>} />
             <Route path='/tests' element={<LabTests/>} />
             <Route path='/radiographs' element={<Radiographs/>} />
+            <Route path='/records' element={<PatientsRecords/>} />
           </Routes>
         </Sidebar>
       )}
