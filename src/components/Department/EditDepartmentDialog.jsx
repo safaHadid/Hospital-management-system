@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { editDepartment } from '../../redux/departmentsSlice';
+
 
 const EditDepartmentDialog = ({ open, handleClose, department }) => {
+  const dispatch = useDispatch();
   const [name, setName] = useState(department.name);
   const [headDoctor, setHeadDoctor] = useState(department.head_doctor);
 
   const handleSaveClick = () => {
+    const updatedDepartment = {
+      ...department,
+      name,
+      head_doctor: headDoctor,
+    };
+    
+    dispatch(editDepartment(updatedDepartment));
     handleClose();
   };
 

@@ -53,17 +53,6 @@ const DepartmentDetailsDialog = ({ open, handleClose, department }) => {
             </ListItem>
           ))}
         </List>
-
-        <Typography variant="h6" gutterBottom>
-          Nurses ({department.nurses.length})
-        </Typography>
-        <List sx={{ bgcolor: 'background.paper' }}>
-          {department.nurses.map((nurse, index) => (
-            <ListItem key={index} sx={{ bgcolor: index % 2 === 0 ? 'action.hover' : 'inherit' }}>
-              {nurse}
-            </ListItem>
-          ))}
-        </List>
       </DialogContent>
       
       <DialogActions>

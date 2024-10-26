@@ -6,6 +6,10 @@ import AddDepartmentDialog from '../components/Department/AddDepartmentDialog';
 const Department = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
+  const doctorsList = [
+    "Dr. Smith", "Dr. Johnson", "Dr. Williams", "Dr. Brown", "Dr. Taylor"
+  ];
+
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
@@ -26,9 +30,10 @@ const Department = () => {
 
       <DepartmentsTable />
 
-      <AddDepartmentDialog 
+      <AddDepartmentDialog
         open={openDialog} 
         handleClose={handleClose} 
+        doctors={doctorsList} 
       />
     </div>
   );

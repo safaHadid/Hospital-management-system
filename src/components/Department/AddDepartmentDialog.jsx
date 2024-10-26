@@ -1,18 +1,41 @@
 import React from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { addDepartment } from '../../redux/departmentsSlice';
 
 const AddDepartmentDialog = ({ open, handleClose }) => {
+  const dispatch = useDispatch();
   const [departmentName, setDepartmentName] = React.useState('');
   const [headDoctor, setHeadDoctor] = React.useState('');
 
-  const doctors = [
-    "Dr. Smith", "Dr. Johnson", "Dr. Williams", "Dr. Brown", "Dr. Taylor"
-  ];
+  const doctors = useSelector((state)=> state.department.doctors);
 
   const handleSubmit = () => {
-    console.log("Department Name:", departmentName);
-    console.log("Head Doctor Name:", headDoctor);
-    handleClose();
+    if (departmentName && headDoctor) {
+      const newDepartment = {
+        id: Date.now(),
+        name: departmentName,
+        number_of_rooms: 0,
+        head_doctor: headDoctor,
+        doctors: [],
+      };
+      dispatch(addDepartment(newDepartment));
+      console.log(newDepartment);
+      handleClose();
+    } else {
+      alert('Please enter both department name and head doctor.');
+    }
   };
 
   return (
@@ -25,13 +48,13 @@ const AddDepartmentDialog = ({ open, handleClose }) => {
           label="Department Name"
           fullWidth
           value={departmentName}
-          onChange={(e)=>{setDepartmentName(e.target.value)}}
+          onChange={(e) => setDepartmentName(e.target.value)}
         />
         <FormControl fullWidth margin="dense">
           <InputLabel>Head of Department</InputLabel>
           <Select
             value={headDoctor}
-            onChange={(e)=>{setHeadDoctor(e.target.value)}}
+            onChange={(e) => setHeadDoctor(e.target.value)}
             label="Head of Department"
           >
             {doctors.map((doctor, index) => (
