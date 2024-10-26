@@ -11,8 +11,10 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import { addDoctor } from "../../redux/doctorsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-const AddDoctorDialog = ({ open, handleClose, departments }) => {
+const AddDoctorDialog = ({ open, handleClose }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [shift, setShift] = useState("");
@@ -26,22 +28,42 @@ const AddDoctorDialog = ({ open, handleClose, departments }) => {
   const [department, setDepartment] = useState("");
   const [salary, setSalary] = useState("");
 
+  const departments = useSelector((state)=>state.doctor.departments);
+  const dispatch = useDispatch();
+
   const handleSubmit = () => {
-    const doctorData = {
-      firstName,
-      lastName,
-      shift,
-      email,
-      password,
-      phone,
-      address,
-      dateOfBirth,
-      gender,
-      specialization,
-      department,
-      salary,
-    };
-    console.log("Doctor Data:", doctorData);
+    if(firstName && lastName && shift && email && password && phone && address && dateOfBirth && gender && specialization && department && salary ){
+      const newDoctor = {
+        id: Date.now(),
+        first_name: firstName,
+        last_name: lastName,
+        shift: shift,
+        email: email,
+        password: password,
+        phone: phone,
+        address: address,
+        specialization: specialization,
+        department_name: department,
+        gender: gender,
+        salary: salary,
+        date_of_birth: dateOfBirth,
+      };
+      dispatch(addDoctor(newDoctor));
+      setAddress('')
+      setDateOfBirth('')
+      setDepartment('')
+      setEmail('')
+      setFirstName('')
+      setGender('')
+      setLastName('')
+      setPassword('')
+      setPhone('')
+      setSalary('')
+      setShift('')
+      setSpecialization('')
+    } else {
+      alert('Please fill all fields.');
+    }
     handleClose();
   };
 

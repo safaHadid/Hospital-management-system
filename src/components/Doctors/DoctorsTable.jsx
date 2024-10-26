@@ -14,50 +14,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import DoctorDetailsDialog from "./DoctorDetailsDialog";
 import EditDoctorDialog from "./EditDoctorDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteDoctor } from "../../redux/doctorsSlice";
 
-const mockDoctors = [
-  {
-    id: 1,
-    first_name: "John",
-    last_name: "Doe",
-    email: "john.doe@example.com",
-    phone: "123-456-7890",
-    address: "123 Elm Street, Springfield",
-    specialization: "Cardiologist",
-    department_name: "Cardiology",
-    gender: "Male",
-    salary: "$200,000",
-    shift: "Morning",
-    date_of_birth: "1985-05-15",
-  },
-  {
-    id: 2,
-    first_name: "Jane",
-    last_name: "Smith",
-    email: "jane.smith@example.com",
-    phone: "987-654-3210",
-    address: "456 Oak Avenue, Springfield",
-    specialization: "Neurologist",
-    department_name: "Neurology",
-    gender: "Female",
-    salary: "$180,000",
-    shift: "Night",
-    date_of_birth: "1990-03-22",
-  },
-];
-
-const departments = [
-  { id: 1, name: "Cardiology" },
-  { id: 2, name: "Neurology" },
-  { id: 3, name: "Oncology" },
-  { id: 4, name: "Pediatrics" },
-  { id: 5, name: "Orthopedics" },
-  { id: 6, name: "Dermatology" },
-  { id: 7, name: "Radiology" },
-  { id: 8, name: "Gastroenterology" },
-  { id: 9, name: "Emergency Medicine" },
-  { id: 10, name: "Endocrinology" },
-];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -78,18 +37,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function DoctorsTable() {
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setDoctors(mockDoctors);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const dispatch = useDispatch();
+
+  const doctors = useSelector((state)=>state.doctor.doctors);
+  const departments = useSelector((state)=>state.doctor.departments);
+
 
   const handleSave = (updatedDoctor) => {
     console.log("updated doctor :", updatedDoctor);
@@ -106,6 +62,7 @@ export default function DoctorsTable() {
   };
 
   const handleDelete = (id) => {
+    dispatch(deleteDoctor(id))
     console.log(`Delete Doctor ID: ${id}`);
   };
 
@@ -119,9 +76,6 @@ export default function DoctorsTable() {
     setSelectedDoctor(null);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -190,7 +144,6 @@ export default function DoctorsTable() {
           open={openEditDialog}
           handleClose={handleCloseEdit}
           doctor={selectedDoctor}
-          departments={departments}
           handleSave={handleSave}
         />
       : null}

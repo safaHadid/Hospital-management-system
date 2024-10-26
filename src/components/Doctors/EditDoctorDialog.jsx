@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
+import { editDoctor } from '../../redux/doctorsSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
-const EditDepartmentDialog = ({ open, handleClose, doctor, departments, handleSave }) => {
+const EditDepartmentDialog = ({ open, handleClose, doctor, handleSave }) => {
   const [firstName, setFirstName] = useState(doctor.first_name);
   const [lastName, setLastName] = useState(doctor.last_name);
   const [shift, setShift] = useState(doctor.shift);
@@ -14,25 +16,34 @@ const EditDepartmentDialog = ({ open, handleClose, doctor, departments, handleSa
   const [specialization, setSpecialization] = useState(doctor.specialization);
   const [salary, setSalary] = useState(doctor.salary);
 
+  const departments = useSelector((state)=>state.doctor.departments);
+
+  const dispatch = useDispatch();
+
   const handleSaveClick = () => {
-    handleSave({
-      firstName,
-      lastName,
-      shift,
-      email,
-      password,
-      phone,
-      address,
-      dateOfBirth,
-      departmentName,
-      gender,
-      specialization,
-      salary,
-    });
+    if(firstName && lastName && shift && email && phone && address && dateOfBirth && gender && specialization && departmentName && salary ){
+    const updatedDoctor = {
+      ...doctor,
+      first_name: firstName,
+        last_name: lastName,
+        shift: shift,
+        email: email,
+        phone: phone,
+        address: address,
+        specialization: specialization,
+        department_name: departmentName,
+        gender: gender,
+        salary: salary,
+        date_of_birth: dateOfBirth,
+    };
+
+    dispatch(editDoctor(updatedDoctor));
     handleClose();
+  } else{
+    alert('Please fill all fields.');
+  }
   };
 
-  console.log(firstName , lastName , salary);
   
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
