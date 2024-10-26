@@ -32,6 +32,8 @@ const AddDepartmentDialog = ({ open, handleClose }) => {
       };
       dispatch(addDepartment(newDepartment));
       console.log(newDepartment);
+      setDepartmentName('');
+      setHeadDoctor('');
       handleClose();
     } else {
       alert('Please enter both department name and head doctor.');
