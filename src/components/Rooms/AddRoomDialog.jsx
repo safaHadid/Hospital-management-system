@@ -11,23 +11,41 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { addRoom } from "../../redux/roomsSlice";
 
-const AddRoomDialog = ({ open, handleClose, departments }) => {
+const AddRoomDialog = ({ open, handleClose }) => {
   const [roomNumber, setRoomNumber] = useState("");
   const [roomType, setRoomType] = useState("");
   const [roomStatus, setRoomStatus] = useState("");
-  const [bedsNumber, setBedsNumber] = useState("");
   const [departmentName, setDepartmentName] = useState("");
+
+  const dispatch = useDispatch();
 
   const StatusOfRoom = ["Available", "Occupied", "Under Maintenance"];
   const TypeOfRoom = ["ICU", "Private", "Shared"];
 
+  const departments = useSelector((state)=>state.room.departments);
+
   const handleSubmit = () => {
-    console.log("Room Number:", roomNumber);
-    console.log("Room Type:", roomType);
-    console.log("Room Status:", roomStatus);
-    console.log("Number of Beds:", bedsNumber);
-    console.log("Department Name:", departmentName);
+    if(roomNumber && roomType && roomStatus && departmentName){
+      const newRoom = {
+        id: Date.now(),
+        room_number: roomNumber,
+        room_type: roomType,
+        status: roomStatus,
+        department_name: departmentName,
+      };
+      dispatch(addRoom(newRoom));
+      console.log(newRoom);
+      setDepartmentName('');
+      setRoomNumber('');
+      setRoomStatus('');
+      setRoomType('');
+      handleClose();
+    } else {
+      alert('Please fill all fields.');
+    }
     handleClose();
   };
 

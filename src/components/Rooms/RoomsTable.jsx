@@ -14,44 +14,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RoomDetailsDialog from "./RoomDetailsDialog";
 import EditRoomDialog from "./EditRoomDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteRoom } from "../../redux/roomsSlice";
 
-const mockRooms = [
-  {
-    id: 1,
-    room_number: 101,
-    room_type: "ICU",
-    department_name: "Cardiology",
-    status: "Available",
-  },
-  {
-    id: 2,
-    room_number: 102,
-    room_type: "Shared",
-    department_name: "Neurology",
-    status: "Occupied",
-  },
-  {
-    id: 3,
-    room_number: 103,
-    room_type: "ICU",
-    department_name: "Pediatrics",
-    status: "Available",
-  },
-  {
-    id: 4,
-    room_number: 104,
-    room_type: "Shared",
-    department_name: "Oncology",
-    status: "Under Maintenance",
-  },
-  {
-    id: 5,
-    room_number: 105,
-    room_type: "Private",
-    department_name: "Orthopedics",
-    status: "Occupied",
-  },
-];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -71,19 +36,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function RoomsTable({ departments }) {
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function RoomsTable() {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setRooms(mockRooms);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const dispatch = useDispatch();
+
+  const rooms = useSelector((state)=> state.room.rooms);
 
   const handleDetails = (department) => {
     setSelectedRoom(department);
@@ -96,16 +56,13 @@ export default function RoomsTable({ departments }) {
   };
 
   const handleDelete = (id) => {
-    console.log(`Delete department ID: ${id}`);
+    dispatch(deleteRoom(id))
+    console.log(`Delete room ID: ${id}`);
   };
 
-  const handleSave = (updatedDepartment) => {
+  const handleSave = () => {
     setOpenEditDialog(false);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -187,7 +144,6 @@ export default function RoomsTable({ departments }) {
             open={openEditDialog}
             handleClose={() => setOpenEditDialog(false)}
             room={selectedRoom}
-            departments={departments}
             handleSave={handleSave}
           />
           <RoomDetailsDialog

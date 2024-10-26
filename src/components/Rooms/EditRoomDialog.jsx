@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem, FormControl, InputLabel, Select } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { editRoom } from "../../redux/roomsSlice";
 
-const EditRoomDialog = ({ open, handleClose, room, departments, handleSave }) => {
+const EditRoomDialog = ({ open, handleClose, room, handleSave }) => {
   const [roomNumber, setRoomNumber] = useState(room.room_number);
   const [roomType, setRoomType] = useState(room.room_type);
   const [roomStatus, setRoomStatus] = useState(room.status);
   const [departmentName, setDepartmentName] = useState(room.department_name);
 
+  const dispatch = useDispatch();
+
+  const departments = useSelector((state) => state.room.departments);
+
   const handleSaveClick = () => {
-    console.log("Room Number:", roomNumber);
-    console.log("Room Type:", roomType);
-    console.log("Room Status:", roomStatus);
-    console.log("Department Name:", departmentName);
+    const updatedRoom = {
+      ...room,
+      room_number: roomNumber,
+      room_type: roomType,
+      status: roomStatus,
+      department_name: departmentName,
+    };
+
+    dispatch(editRoom(updatedRoom));
     handleClose();
   };
 
@@ -54,9 +76,12 @@ const EditRoomDialog = ({ open, handleClose, room, departments, handleSave }) =>
 
         <FormControl fullWidth margin="dense">
           <InputLabel>Department</InputLabel>
-          <Select defaultValue={departmentName}>
+          <Select
+            value={departmentName}
+            onChange={(e) => setDepartmentName(e.target.value)}
+          >
             {departments.map((department, index) => (
-              <MenuItem key={index} value={department.name} onChange={(e)=>{setDepartmentName(e.target.value)}}>
+              <MenuItem key={index} value={department.name}>
                 {department.name}
               </MenuItem>
             ))}
@@ -65,7 +90,9 @@ const EditRoomDialog = ({ open, handleClose, room, departments, handleSave }) =>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleSaveClick} color="primary" variant="contained">Save</Button>
+        <Button onClick={handleSaveClick} color="primary" variant="contained">
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );
