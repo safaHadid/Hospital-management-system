@@ -1,47 +1,63 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
-import { editDoctor } from '../../redux/doctorsSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 
 const EditDepartmentDialog = ({ open, handleClose, doctor, handleSave }) => {
   const [firstName, setFirstName] = useState(doctor.first_name);
   const [lastName, setLastName] = useState(doctor.last_name);
-  const [shift, setShift] = useState(doctor.shift);
+  const [shift, setShift] = useState(doctor.session_period);
   const [email, setEmail] = useState(doctor.email);
-  const [phone, setPhone] = useState(doctor.phone);
+  const [password, setPassword] = useState(doctor.password);
+  const [phone, setPhone] = useState(doctor.phone_number);
   const [address, setAddress] = useState(doctor.address);
-  const [dateOfBirth, setDateOfBirth] = useState(doctor.date_of_birth);
-  const [departmentName, setDepartmentName] = useState(doctor.department_name);
+  const [dateOfBirth, setDateOfBirth] = useState(doctor.date_of_birth.substring(0, 10));
+  const [departmentName, setDepartmentName] = useState(doctor.department);
+  const [departmentID, setDepartmentID] = useState();
   const [gender, setGender] = useState(doctor.gender);
   const [specialization, setSpecialization] = useState(doctor.specialization);
-  const [salary, setSalary] = useState(doctor.salary);
+  const [departments, setDepartments] = useState([]);
 
-  const departments = useSelector((state)=>state.doctor.departments);
 
-  const dispatch = useDispatch();
+  useEffect(()=>{
+    axios
+      .get(`https://endtest.takeittechnology.tech/api/departments`)
+      .then((response) => {
+        setDepartments(response.data.data);
+      })
+      .catch((error) => console.error("Error fetching departments:", error));
+  })
 
-  const handleSaveClick = () => {
-    if(firstName && lastName && shift && email && phone && address && dateOfBirth && gender && specialization && departmentName && salary ){
+
+  const handleSaveClick = async () => {
     const updatedDoctor = {
       ...doctor,
       first_name: firstName,
         last_name: lastName,
-        shift: shift,
+        session_period: shift,
         email: email,
-        phone: phone,
+        password:password,
+        phone_number: phone,
         address: address,
         specialization: specialization,
-        department_name: departmentName,
+        department_id: departmentID,
         gender: gender,
-        salary: salary,
+        role:"doctor",
         date_of_birth: dateOfBirth,
     };
+    console.log({ firstName, lastName, shift, email, phone, address, dateOfBirth, gender, specialization, departmentName });
 
-    dispatch(editDoctor(updatedDoctor));
+
+    try {
+      await axios.put(
+        `https://endtest.takeittechnology.tech/api/doctors/${doctor.id}`,
+        updatedDoctor
+      );
+    }
+    catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred.");
+    }
     handleClose();
-  } else{
-    alert('Please fill all fields.');
-  }
   };
 
   
@@ -71,8 +87,8 @@ const EditDepartmentDialog = ({ open, handleClose, doctor, handleSave }) => {
           fullWidth
           margin="dense"
         >
-          <MenuItem value="Morning">Morning</MenuItem>
-          <MenuItem value="Night">Night</MenuItem>
+          <MenuItem value="morning">Morning</MenuItem>
+          <MenuItem value="night">Night</MenuItem>
         </TextField>
         <TextField
           label="Email"
@@ -113,7 +129,7 @@ const EditDepartmentDialog = ({ open, handleClose, doctor, handleSave }) => {
           margin="dense"
         >
           {departments.map((dept) => (
-            <MenuItem key={dept.id} value={dept.name}>
+            <MenuItem key={dept.id} value={dept.name} onClick={()=>setDepartmentID(dept.id)}>
               {dept.name}
             </MenuItem>
           ))}
@@ -126,20 +142,13 @@ const EditDepartmentDialog = ({ open, handleClose, doctor, handleSave }) => {
           fullWidth
           margin="dense"
         >
-          <MenuItem value="Male">Male</MenuItem>
-          <MenuItem value="Female">Female</MenuItem>
+          <MenuItem value="male">male</MenuItem>
+          <MenuItem value="female">female</MenuItem>
         </TextField>
         <TextField
           label="Specialization"
           value={specialization}
           onChange={(e) => setSpecialization(e.target.value)}
-          fullWidth
-          margin="dense"
-        />
-        <TextField
-          label="Salary"
-          value={salary}
-          onChange={(e) => setSalary(e.target.value)}
           fullWidth
           margin="dense"
         />

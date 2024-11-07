@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -7,33 +7,61 @@ import {
   Button,
   TextField,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
+import axios from "axios";
 
-const roomNumbers = [100 , 101 , 200 , 201 , 300 , 301];
-
-const EditPatientDialog = ({
-  open,
-  handleClose,
-  patient,
-  departments,
-  handleSave,
-}) => {
+const EditPatientDialog = ({ open, handleClose, patient }) => {
   const [firstName, setFirstName] = useState(patient.first_name);
   const [lastName, setLastName] = useState(patient.last_name);
-  const [idNumber, setIdNumber] = useState(patient.id_card_number);
-  const [phone, setPhone] = useState(patient.phone);
+  const [idNumber, setIdNumber] = useState(patient.national_number);
+  const [phone, setPhone] = useState(patient.phone_number);
   const [address, setAddress] = useState(patient.address);
-  const [dateOfBirth, setDateOfBirth] = useState(patient.date_of_birth);
-  const [departmentName, setDepartmentName] = useState(patient.department);
+  const [dateOfBirth, setDateOfBirth] = useState(patient.date_of_birth.substring(0, 10));
   const [room, setRoom] = useState(patient.room);
   const [gender, setGender] = useState(patient.gender);
-  const [discharged, setDischarged] = useState(patient.discharged || false);
+  const [email, setEmail] = useState(patient.email || "");
+  const [password, setPassword] = useState(patient.password);
+  const [doctorId, setDoctorId] = useState(patient.doctor_id || [1]);
+  const [rooms, setRooms] = useState([]);
 
-  const handleSaveClick = () => {  
-    console.log(firstName,lastName,phone,address,dateOfBirth,departmentName,room,gender,discharged);
-    handleClose();
+  console.log(patient);
+  
+
+  useEffect(() => {
+    axios
+      .get("https://endtest.takeittechnology.tech/api/rooms")
+      .then((response) => setRooms(response.data.data))
+      .catch((error) => console.error("Error fetching rooms:", error));
+  }, []);
+
+  const handleSaveClick = async () => {
+    const updatedPatient = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone_number: phone,
+      address: address,
+      date_of_birth: dateOfBirth,
+      gender: gender,
+      password: password,
+      doctor_id: doctorId,
+      room_id: room,
+      national_number: idNumber,
+    };
+    console.log(updatedPatient);
+    
+
+    try {
+      await axios.put(
+        `https://endtest.takeittechnology.tech/api/patients/${patient.id}`,
+        updatedPatient,
+        { headers: { Accept: "application/json" } }
+      );
+      handleClose();
+    } catch (error) {
+      console.error("Error updating patient:", error);
+      alert("An error occurred.");
+    }
   };
 
   return (
@@ -69,6 +97,21 @@ const EditPatientDialog = ({
           margin="dense"
         />
         <TextField
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          fullWidth
+          margin="dense"
+        />
+        <TextField
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          fullWidth
+          margin="dense"
+          type="password"
+        />
+        <TextField
           label="Address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
@@ -92,43 +135,23 @@ const EditPatientDialog = ({
           fullWidth
           margin="dense"
         >
-          <MenuItem value="Male">Male</MenuItem>
-          <MenuItem value="Female">Female</MenuItem>
+          <MenuItem value="male">Male</MenuItem>
+          <MenuItem value="female">Female</MenuItem>
         </TextField>
         <TextField
           select
           label="Room"
-          value={room}
+          value={room || ""}
           onChange={(e) => setRoom(e.target.value)}
           fullWidth
           margin="dense"
         >
-          {roomNumbers.map((room, index) => (
-              <MenuItem key={index} value={room}>
-                {room}
-              </MenuItem>
-            ))}
+          {rooms.map((room, index) => (
+            <MenuItem key={index} value={room.room_number}>
+              {room.room_number}
+            </MenuItem>
+          ))}
         </TextField>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={discharged}
-              onChange={(e) => setDischarged(e.target.checked)}
-            />
-          }
-          label="Discharged"
-        />
-        {/* <TextField
-          select
-          label="Discharge Status"
-          value={discharged ? "discharged" : "not_discharged"}
-          onChange={(e) => setDischarged(e.target.value === "discharged")}
-          fullWidth
-          margin="dense"
-        >
-          <MenuItem value="not_discharged">Not Discharged</MenuItem>
-          <MenuItem value="discharged">Discharged</MenuItem>
-        </TextField> */}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

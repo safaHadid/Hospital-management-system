@@ -14,6 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PatientDetailsDialog from "./PatientDetailsDialog";
 import EditPatientDialog from "./EditPatientDialog";
+import { Pagination } from "@mui/material";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,93 +35,54 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const mockPatients = [
-  {
-    id: 1,
-    first_name: "John",
-    last_name: "Doe",
-    phone: "555-1234",
-    address: "123 Main St, Springfield",
-    date_of_birth: "1985-02-15",
-    gender: "Male",
-    department: "Cardiology",
-    room: 101,
-    id_card_number: "ID123456",
-  },
-  {
-    id: 2,
-    first_name: "Jane",
-    last_name: "Smith",
-    phone: "555-5678",
-    address: "456 Oak Ave, Springfield",
-    date_of_birth: "1990-07-22",
-    gender: "Female",
-    department: "Neurology",
-    room: 201,
-    id_card_number: "ID789012",
-  },
-  {
-    id: 3,
-    first_name: "Emily",
-    last_name: "Johnson",
-    phone: "555-9876",
-    address: "789 Pine Dr, Springfield",
-    date_of_birth: "1978-10-03",
-    gender: "Female",
-    department: "Oncology",
-    room: 302,
-    id_card_number: "ID345678",
-  },
-  {
-    id: 4,
-    first_name: "Michael",
-    last_name: "Brown",
-    phone: "555-6543",
-    address: "321 Maple St, Springfield",
-    date_of_birth: "1982-05-30",
-    gender: "Male",
-    department: "Pediatrics",
-    room: 401,
-    id_card_number: "ID901234",
-  },
-  {
-    id: 5,
-    first_name: "Olivia",
-    last_name: "Davis",
-    phone: "555-7890",
-    address: "246 Birch Rd, Springfield",
-    date_of_birth: "1995-12-10",
-    gender: "Female",
-    department: "Orthopedics",
-    room: 502,
-    id_card_number: "ID567890",
-  },
-];
-
 
 const PatientsTable = ({departments}) => {
   const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [doctors, setDoctors] = useState([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   useEffect(() => {
-    setTimeout(() => {
-      setPatients(mockPatients);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    fetchPatients(page);
+  }, [page,patients]);
 
+  const fetchPatients = (page) => {
+    axios.get(`https://endtest.takeittechnology.tech/api/patients?page=${page}`)
+    .then((response) => {
+      setPatients(response.data.data);
+      setLastPage(response.data.pagination.total_pages);
+    })
+        .catch((error) => console.error("Error fetching departments:", error));
+        
+};
   const handleEdit = (patient) => {
     setSelectedPatient(patient);
     setOpenEditDialog(true);
   };
-  
 
-  const handleDelete = (id) => {
-    console.log(`Deleting patient ID: ${id}`);
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };  
+
+  const handleDelete = async (id) => {
+    console.log(id);
+
+    try {
+      await axios.delete(
+        `https://endtest.takeittechnology.tech/api/patients/${id}`
+      );
+      setPatients((prev) =>
+        prev.filter((patient) => patient.id !== id)
+      );
+      console.log(`Deleted ID: ${id}`);
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
   };
+
 
   const handleSave = (updatedDoctor) => {
     console.log("updatedDoctor :" , updatedDoctor );
@@ -142,10 +105,6 @@ const PatientsTable = ({departments}) => {
     setSelectedPatient(null);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
 
   return (
     <>
@@ -164,7 +123,7 @@ const PatientsTable = ({departments}) => {
             {patients.map((patient) => (
               <StyledTableRow key={patient.id}>
                 <StyledTableCell>{patient.first_name} {patient.last_name}</StyledTableCell>
-                <StyledTableCell>{patient.date_of_birth}</StyledTableCell>
+                <StyledTableCell>{patient.date_of_birth.substring(0, 10)}</StyledTableCell>
                 <StyledTableCell>{patient.gender}</StyledTableCell>
                 <StyledTableCell>{patient.room}</StyledTableCell>
                 <StyledTableCell>
@@ -189,6 +148,14 @@ const PatientsTable = ({departments}) => {
           </TableBody>
         </Table>
     </TableContainer>
+
+    <Pagination
+        count={lastPage}
+        page={page}
+        onChange={handlePageChange}
+        color="primary"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+      />
 
 
     {selectedPatient?

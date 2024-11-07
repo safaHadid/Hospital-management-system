@@ -4,10 +4,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import { Grid } from '@mui/material';
 
 const DepartmentDetailsDialog = ({ open, handleClose, department }) => {
@@ -40,19 +37,6 @@ const DepartmentDetailsDialog = ({ open, handleClose, department }) => {
             </Typography>
           </Grid>
         </Grid>
-        
-        <Divider sx={{ my: 2 }} />
-        
-        <Typography variant="h6" gutterBottom>
-          Doctors ({department.doctors.length})
-        </Typography>
-        <List sx={{ bgcolor: 'background.paper', mb: 2 }}>
-          {department.doctors.map((doctor, index) => (
-            <ListItem key={index} sx={{ bgcolor: index % 2 === 0 ? 'action.hover' : 'inherit' }}>
-              {doctor}
-            </ListItem>
-          ))}
-        </List>
       </DialogContent>
       
       <DialogActions>

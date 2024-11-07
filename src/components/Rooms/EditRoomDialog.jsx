@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -11,30 +11,54 @@ import {
   InputLabel,
   Select,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { editRoom } from "../../redux/roomsSlice";
+import axios from "axios";
 
-const EditRoomDialog = ({ open, handleClose, room, handleSave }) => {
+const EditRoomDialog = ({ open, handleClose, room }) => {
   const [roomNumber, setRoomNumber] = useState(room.room_number);
-  const [roomType, setRoomType] = useState(room.room_type);
+  const [roomType, setRoomType] = useState(room.type);
   const [roomStatus, setRoomStatus] = useState(room.status);
-  const [departmentName, setDepartmentName] = useState(room.department_name);
+  const [departmentID, setDepartmentID] = useState(room.department_id);
+  const [departments, setDepartments] = useState([]);
+  const [department, setDepartment] = useState(room.department_name);
+  
 
-  const dispatch = useDispatch();
 
-  const departments = useSelector((state) => state.room.departments);
+  useEffect(() => {
+    axios
+      .get("https://endtest.takeittechnology.tech/api/departments")
+      .then((response) => setDepartments(response.data.data))
+      .catch((error) => console.error("Error fetching departments:", error));
+  }, []);
 
-  const handleSaveClick = () => {
+  useEffect(() => {
+    setRoomNumber(room.room_number);
+    setRoomType(room.type);
+    setRoomStatus(room.status);
+    setDepartmentID(room.department_id);
+  }, [room]);
+
+  const handleSaveClick = async () => {
     const updatedRoom = {
-      ...room,
       room_number: roomNumber,
-      room_type: roomType,
+      type: roomType,
       status: roomStatus,
-      department_name: departmentName,
+      department_id: departmentID,
     };
 
-    dispatch(editRoom(updatedRoom));
-    handleClose();
+    try {
+      const response = await axios.put(
+        `https://endtest.takeittechnology.tech/api/rooms/${room.id}`,
+        updatedRoom
+      );
+      handleClose();
+      console.log("Room updated successfully:", response.data);
+    } catch (error) {
+      console.error(
+        "Error updating room:",
+        error.response ? error.response.data : error.message
+      );
+      alert("An error occurred while updating the room. Please try again.");
+    }
   };
 
   return (
@@ -68,21 +92,21 @@ const EditRoomDialog = ({ open, handleClose, room, handleSave }) => {
             value={roomStatus}
             onChange={(e) => setRoomStatus(e.target.value)}
           >
-            <MenuItem value="Available">Available</MenuItem>
-            <MenuItem value="Occupied">Occupied</MenuItem>
-            <MenuItem value="Under Maintenance">Under Maintenance</MenuItem>
+            <MenuItem value="available">Available</MenuItem>
+            <MenuItem value="occupied">Occupied</MenuItem>
+            <MenuItem value="under maintenance">Under Maintenance</MenuItem>
           </Select>
         </FormControl>
 
         <FormControl fullWidth margin="dense">
           <InputLabel>Department</InputLabel>
           <Select
-            value={departmentName}
-            onChange={(e) => setDepartmentName(e.target.value)}
+            value={department}
+            onChange={(e)=>{setDepartment(e.target.value)}}
           >
-            {departments.map((department, index) => (
-              <MenuItem key={index} value={department.name}>
-                {department.name}
+            {departments.map((dept) => (
+              <MenuItem key={dept.id} value={dept.name} onClick={()=>setDepartmentID(dept.id)}>
+                {dept.name}
               </MenuItem>
             ))}
           </Select>

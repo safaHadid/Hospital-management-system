@@ -1,44 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import axios from "axios";
 
-
-const roomNumbers = [100 , 101 , 200 , 201 , 300 , 301];
-
-
-const AddPatientDialog = ({ open, handleClose, departments }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [idNumber, setIdNumber] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState('');
-  const [department, setDepartment] = useState('');
-  const [filteredRooms, setFilteredRooms] = useState([]);
-  const [room, setRoom] = useState('');
+const AddPatientDialog = ({ open, handleClose }) => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [idNumber, setIdNumber] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [address, setAddress] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState("");
+  const [room, setRoom] = useState("");
+  const [doctorId, setDoctorId] = useState("");
+  const [rooms, setRooms] = useState([]);
+  const [doctors, setDoctors] = useState([]);
 
   useEffect(() => {
-    const selectedDepartment = departments.find(department => department.id === department);
-    if (selectedDepartment) {
-      setFilteredRooms(selectedDepartment.rooms);
-    } else {
-      setFilteredRooms([]);
-    }
-  }, [department, departments]);
-
-  const handleSubmit = () => {
-    const patientData = {
-      firstName,
-      lastName,
-      phone,
-      address,
-      dateOfBirth,
-      gender,
-      department,
-      room
+    const fetchDoctors = async () => {
+      try {
+        const response = await axios.get(`https://endtest.takeittechnology.tech/api/doctors`);
+        setDoctors(response.data.data);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
     };
-    console.log(patientData);
-    handleClose();
+
+    fetchDoctors();
+  }, []);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await axios.get(`https://endtest.takeittechnology.tech/api/rooms`);
+        setRooms(response.data.data);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  const handleSubmit = async () => {
+    const newPatient = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone_number: phone,
+      address: address,
+      date_of_birth: dateOfBirth,
+      gender: gender,
+      password: password,
+      room_id: room,
+      national_number: idNumber,
+    };
+    console.log(newPatient);
+    
+
+    try {
+      await axios.post(
+        "https://endtest.takeittechnology.tech/api/patients",
+        newPatient,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      handleClose();
+    } catch (error) {
+      console.error("Error adding patient:", error);
+      alert("An error occurred.");
+    }
   };
 
   return (
@@ -76,6 +123,21 @@ const AddPatientDialog = ({ open, handleClose, departments }) => {
         />
         <TextField
           margin="dense"
+          label="Email"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          label="Password"
+          type="password"
+          fullWidth
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <TextField
+          margin="dense"
           label="Address"
           fullWidth
           value={address}
@@ -92,23 +154,28 @@ const AddPatientDialog = ({ open, handleClose, departments }) => {
         />
         <FormControl fullWidth margin="dense">
           <InputLabel>Gender</InputLabel>
-          <Select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-          >
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Female">Female</MenuItem>
+          <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+            <MenuItem value="male">Male</MenuItem>
+            <MenuItem value="female">Female</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth margin="dense">
           <InputLabel>Room</InputLabel>
-          <Select
-            value={room}
-            onChange={(e) => setRoom(e.target.value)}
-          >
-          {roomNumbers.map((room, index) => (
-              <MenuItem key={index} value={room}>
-                {room}
+          <Select value={room} onChange={(e) => setRoom(e.target.value)}>
+            {rooms.map((room, index) => (
+              <MenuItem key={index} value={room.id}>
+                {room.room_number}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth margin="dense">
+          <InputLabel>Doctor</InputLabel>
+          <Select value={doctorId} onChange={(e) => setDoctorId(e.target.value)}>
+            {doctors.map((doctor, index) => (
+              <MenuItem key={index} value={doctor.id}>
+                {doctor.first_name} {doctor.last_name}
               </MenuItem>
             ))}
           </Select>

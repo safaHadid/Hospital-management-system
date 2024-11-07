@@ -22,12 +22,12 @@ const RadiographDetailsDialog = ({ open, handleClose, radiograph }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Patient Name:</strong> {radiograph.patient_name}
+              <strong>Patient Name:</strong> {radiograph.patient}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Doctor Name:</strong> {radiograph.doctor_name}
+              <strong>Doctor Name:</strong> {radiograph.doctor}
             </Typography>
           </Grid>
           <Grid item xs={12}>

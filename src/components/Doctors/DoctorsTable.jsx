@@ -14,8 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import DoctorDetailsDialog from "./DoctorDetailsDialog";
 import EditDoctorDialog from "./EditDoctorDialog";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteDoctor } from "../../redux/doctorsSlice";
+import axios from "axios";
+import { Pagination } from "@mui/material";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -40,11 +40,23 @@ export default function DoctorsTable() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [doctors, setDoctors] = useState([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    fetchDoctors(page);
+  }, [page,doctors]);
 
-  const doctors = useSelector((state)=>state.doctor.doctors);
-  const departments = useSelector((state)=>state.doctor.departments);
+  const fetchDoctors = (page) => {
+    axios.get(`https://endtest.takeittechnology.tech/api/doctors?page=${page}`)
+    .then((response) => {
+      setDoctors(response.data.data);
+      setLastPage(response.data.pagination.total_pages);
+    })
+        .catch((error) => console.error("Error fetching departments:", error));
+        
+};
 
 
   const handleSave = (updatedDoctor) => {
@@ -61,9 +73,24 @@ export default function DoctorsTable() {
     setOpenEditDialog(true);
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteDoctor(id))
-    console.log(`Delete Doctor ID: ${id}`);
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+
+    try {
+      await axios.delete(
+        `https://endtest.takeittechnology.tech/api/doctors/${id}`
+      );
+      setDoctors((prev) =>
+        prev.filter((doctor) => doctor.id !== id)
+      );
+      console.log(`Deleted ID: ${id}`);
+    } catch (error) {
+      console.error("Error deleting doctor:", error);
+    }
   };
 
   const handleCloseDetails = () => {
@@ -86,7 +113,6 @@ export default function DoctorsTable() {
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Specialization</StyledTableCell>
               <StyledTableCell>Department</StyledTableCell>
-              <StyledTableCell>Shift</StyledTableCell>
               <StyledTableCell>Phone</StyledTableCell>
               <StyledTableCell>Address</StyledTableCell>
               <StyledTableCell>Action</StyledTableCell>
@@ -96,12 +122,11 @@ export default function DoctorsTable() {
             {doctors.map((doctor, index) => (
               <StyledTableRow key={index}>
                 <StyledTableCell>
-                  {doctor.first_name} {doctor.last_name}
+                {doctor.first_name} {doctor.last_name}
                 </StyledTableCell>
                 <StyledTableCell>{doctor.specialization}</StyledTableCell>
-                <StyledTableCell>{doctor.department_name}</StyledTableCell>
-                <StyledTableCell>{doctor.shift}</StyledTableCell>
-                <StyledTableCell>{doctor.phone}</StyledTableCell>
+                <StyledTableCell>{doctor.department}</StyledTableCell>
+                <StyledTableCell>{doctor.phone_number}</StyledTableCell>
                 <StyledTableCell>{doctor.address}</StyledTableCell>
                 <StyledTableCell align="center">
                   <Tooltip title="View Details">
@@ -131,6 +156,13 @@ export default function DoctorsTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        count={lastPage}
+        page={page}
+        onChange={handlePageChange}
+        color="primary"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+      />
 
       {selectedDoctor ?
         <DoctorDetailsDialog

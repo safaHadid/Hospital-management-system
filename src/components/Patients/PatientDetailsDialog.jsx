@@ -24,13 +24,13 @@ const PatientDetailsDialog = ({ open, handleClose, patient }) => {
 
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>ID Card Number:</strong> {patient.id_card_number}
+              <strong>ID Card Number:</strong> {patient.national_number}
             </Typography>
           </Grid>
           
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Phone:</strong> {patient.phone}
+              <strong>Phone:</strong> {patient.phone_number}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -45,7 +45,7 @@ const PatientDetailsDialog = ({ open, handleClose, patient }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Date of Birth:</strong> {patient.date_of_birth}
+              <strong>Date of Birth:</strong> {patient.date_of_birth.substring(0, 10)}
             </Typography>
           </Grid>
           <Grid item xs={12}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -10,9 +10,9 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Typography,
 } from "@mui/material";
-import { addDoctor } from "../../redux/doctorsSlice";
-import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 const AddDoctorDialog = ({ open, handleClose }) => {
   const [firstName, setFirstName] = useState("");
@@ -27,45 +27,59 @@ const AddDoctorDialog = ({ open, handleClose }) => {
   const [specialization, setSpecialization] = useState("");
   const [department, setDepartment] = useState("");
   const [salary, setSalary] = useState("");
+  const [departments, setDepartments] = useState([]);
 
-  const departments = useSelector((state)=>state.doctor.departments);
-  const dispatch = useDispatch();
 
-  const handleSubmit = () => {
-    if(firstName && lastName && shift && email && password && phone && address && dateOfBirth && gender && specialization && department && salary ){
+  useEffect(()=>{
+    axios
+      .get(`https://endtest.takeittechnology.tech/api/departments`)
+      .then((response) => {
+        setDepartments(response.data.data);
+      })
+      .catch((error) => console.error("Error fetching departments:", error));
+  })
+
+
+  const handleSubmit = async () => {
+    if (firstName && lastName && shift && email && password && phone && address && dateOfBirth && gender && specialization && department && salary) {
       const newDoctor = {
-        id: Date.now(),
         first_name: firstName,
         last_name: lastName,
-        shift: shift,
+        session_period: shift,
         email: email,
         password: password,
-        phone: phone,
+        phone_number: phone,
         address: address,
         specialization: specialization,
-        department_name: department,
+        department_id: department,
         gender: gender,
         salary: salary,
+        role:"doctor",
         date_of_birth: dateOfBirth,
       };
-      dispatch(addDoctor(newDoctor));
-      setAddress('')
-      setDateOfBirth('')
-      setDepartment('')
-      setEmail('')
-      setFirstName('')
-      setGender('')
-      setLastName('')
-      setPassword('')
-      setPhone('')
-      setSalary('')
-      setShift('')
-      setSpecialization('')
+      try {
+        await axios.post("https://endtest.takeittechnology.tech/api/admin/doctor", newDoctor);
+        handleClose();
+        setAddress('');
+      setDateOfBirth('');
+      setDepartment('');
+      setEmail('');
+      setFirstName('');
+      setGender('');
+      setLastName('');
+      setPassword('');
+      setPhone('');
+      setSalary('');
+      setShift('');
+      setSpecialization('');
+      } catch (error) {
+        console.error("Error adding:", error);
+      }
     } else {
       alert('Please fill all fields.');
     }
-    handleClose();
   };
+  
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm">
@@ -94,8 +108,8 @@ const AddDoctorDialog = ({ open, handleClose }) => {
           fullWidth
           margin="dense"
         >
-          <MenuItem value="Morning">Morning</MenuItem>
-          <MenuItem value="Night">Night</MenuItem>
+          <MenuItem value="norning">Morning</MenuItem>
+          <MenuItem value="night">Night</MenuItem>
         </TextField>
         <TextField
           margin="dense"
@@ -112,6 +126,9 @@ const AddDoctorDialog = ({ open, handleClose }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <Typography variant="caption">
+            password needs to be more than 8 characters
+          </Typography>
         <TextField
           margin="dense"
           label="Phone"
@@ -138,8 +155,8 @@ const AddDoctorDialog = ({ open, handleClose }) => {
         <FormControl fullWidth margin="dense">
           <InputLabel>Gender</InputLabel>
           <Select value={gender} onChange={(e) => setGender(e.target.value)}>
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Female">Female</MenuItem>
+            <MenuItem value="male">Male</MenuItem>
+            <MenuItem value="female">Female</MenuItem>
           </Select>
         </FormControl>
         <TextField

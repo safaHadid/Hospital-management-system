@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -11,33 +11,41 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { addDepartment } from '../../redux/departmentsSlice';
+
+import axios from 'axios';
 
 const AddDepartmentDialog = ({ open, handleClose }) => {
-  const dispatch = useDispatch();
-  const [departmentName, setDepartmentName] = React.useState('');
-  const [headDoctor, setHeadDoctor] = React.useState('');
+  const [departmentName, setDepartmentName] =useState('');
+  const [headDoctor, setHeadDoctor] =useState('');
+  const [doctors, setDoctors] = useState([]);
 
-  const doctors = useSelector((state)=> state.department.doctors);
+  useEffect(() => {
+    axios.get('https://endtest.takeittechnology.tech/api/doctors')
+        .then((response) => setDoctors(response.data.data))
+        .catch((error) => console.error("Error fetching departments:", error));
+}, []);
 
-  const handleSubmit = () => {
-    if (departmentName && headDoctor) {
+
+  const handleSubmit = async () => {
       const newDepartment = {
-        id: Date.now(),
         name: departmentName,
-        number_of_rooms: 0,
-        head_doctor: headDoctor,
-        doctors: [],
+        head_doctor_id: headDoctor,
       };
-      dispatch(addDepartment(newDepartment));
       console.log(newDepartment);
+      
+      try {
+        await axios.post(
+          "https://endtest.takeittechnology.tech/api/departments",
+          newDepartment
+        );
       setDepartmentName('');
       setHeadDoctor('');
       handleClose();
-    } else {
-      alert('Please enter both department name and head doctor.');
-    }
+      }
+      catch (error) {
+        console.error("Error adding room:", error);
+        alert("An error occurred while adding the room.");
+      }
   };
 
   return (
@@ -60,8 +68,8 @@ const AddDepartmentDialog = ({ open, handleClose }) => {
             label="Head of Department"
           >
             {doctors.map((doctor, index) => (
-              <MenuItem key={index} value={doctor}>
-                {doctor}
+              <MenuItem key={index} value={doctor.id}>
+                {doctor.first_name} {doctor.last_name}
               </MenuItem>
             ))}
           </Select>

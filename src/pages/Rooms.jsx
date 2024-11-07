@@ -18,7 +18,7 @@ const Rooms = () => {
     <div>
       <Button
         variant="contained"
-        sx={{ backgroundColor: 'primary.main', color: 'white', my: 5, px: 5, py: 2 }}
+        sx={{ backgroundColor: 'primary.main', color: 'white', my: 2, px: 5, py: 2 }}
         onClick={handleClickOpen}
       >
         Add Room

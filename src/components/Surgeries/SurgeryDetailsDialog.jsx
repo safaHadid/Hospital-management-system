@@ -27,17 +27,17 @@ const SurgeryDetailsDialog = ({ open, handleClose, surgery }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Room Number:</strong> {surgery.roomNumber}
+              <strong>Room Number:</strong> {surgery.room_number}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Surgery Type:</strong> {surgery.surgery_type}
+              <strong>Surgery Type:</strong> {surgery.type_surgery}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Surgery Date:</strong> {surgery.surgery_date}
+              <strong>Surgery Date:</strong> {surgery.date_scheduled}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -47,7 +47,7 @@ const SurgeryDetailsDialog = ({ open, handleClose, surgery }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Surgery Status:</strong> {surgery.surgery_status}
+              <strong>Surgery Status:</strong> {surgery.status_surgery}
             </Typography>
           </Grid>
         </Grid>

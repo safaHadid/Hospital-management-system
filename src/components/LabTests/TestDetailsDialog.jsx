@@ -22,17 +22,17 @@ const TestDetailsDialog = ({ open, handleClose, test }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Patient Name:</strong> {test.patient_name}
+              <strong>Patient Name:</strong> {test.patient}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Doctor Name:</strong> {test.doctor_name}
+              <strong>Doctor Name:</strong> {test.doctor}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Result Date:</strong> {test.result_date}
+              <strong>Result Date:</strong> {test.test_date}
             </Typography>
           </Grid>
           <Grid item xs={12}>

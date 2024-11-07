@@ -38,20 +38,7 @@ const RoomDetailsDialog = ({ open, handleClose, room }) => {
           <Grid item xs={6}>
             <Typography variant="body1" color="textSecondary">
               <strong>Room Status: </strong> 
-              <span
-                    style={{
-                      color:
-                        room.status === "Available"
-                          ? "green"
-                          : room.status === "Occupied"
-                          ? "blue"
-                          : room.status === "Under Maintenance"
-                          ? "orange"
-                          : "black",
-                    }}
-                  >
                     {room.status}
-                  </span>
             </Typography>
           </Grid>
         </Grid>

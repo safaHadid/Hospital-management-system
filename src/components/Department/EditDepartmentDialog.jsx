@@ -1,23 +1,49 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { editDepartment } from '../../redux/departmentsSlice';
+import axios from 'axios';
 
 
 const EditDepartmentDialog = ({ open, handleClose, department }) => {
-  const dispatch = useDispatch();
   const [name, setName] = useState(department.name);
   const [headDoctor, setHeadDoctor] = useState(department.head_doctor);
+  const [doctors, setDoctors] = useState([]);
 
-  const handleSaveClick = () => {
+  useEffect(() => {
+    if (department) {
+      setName(department.name);
+      setHeadDoctor(department.head_doctor_id);
+    }
+  }, [department]);
+  
+
+  useEffect(() => {
+    axios.get('https://endtest.takeittechnology.tech/api/doctors')
+        .then((response) => setDoctors(response.data.data))
+        .catch((error) => console.error("Error fetching departments:", error));
+}, []);
+
+  const handleSaveClick = async () => {
     const updatedDepartment = {
       ...department,
       name,
-      head_doctor: headDoctor,
+      head_doctor_id: headDoctor,
     };
+    console.log(updatedDepartment);
     
-    dispatch(editDepartment(updatedDepartment));
+    
+    try {
+      await axios.put(
+        `https://endtest.takeittechnology.tech/api/departments/${department.id}`,
+        updatedDepartment
+      );
+    setName('');
+    setHeadDoctor('');
     handleClose();
+    }
+    catch (error) {
+      console.error("Error adding room:", error);
+      alert("An error occurred while adding the room.");
+    }
   };
 
   return (
@@ -39,9 +65,12 @@ const EditDepartmentDialog = ({ open, handleClose, department }) => {
           fullWidth
           margin="dense"
         >
-          {department.doctors?.map((doctor) => (
-            <MenuItem key={doctor} value={doctor}>
-              {doctor}
+          <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+          {doctors?.map((doctor) => (
+            <MenuItem key={doctor.id} value={doctor.id}>
+              {doctor.first_name} {doctor.last_name}
             </MenuItem>
           ))}
         </TextField>

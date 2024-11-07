@@ -28,7 +28,7 @@ const DoctorDetailsDialog = ({ open, handleClose, doctor }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Shift:</strong> {doctor.shift}
+              <strong>Shift:</strong> {doctor.session_period}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -38,7 +38,7 @@ const DoctorDetailsDialog = ({ open, handleClose, doctor }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Phone:</strong> {doctor.phone}
+              <strong>Phone:</strong> {doctor.phone_number}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -53,17 +53,12 @@ const DoctorDetailsDialog = ({ open, handleClose, doctor }) => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Salary:</strong> {doctor.salary}
+              <strong>Date of Birth:</strong> {doctor.date_of_birth.substring(0, 10)}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary">
-              <strong>Date of Birth:</strong> {doctor.date_of_birth}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1" color="textSecondary">
-              <strong>Department:</strong> {doctor.department_name}
+              <strong>Department:</strong> {doctor.department}
             </Typography>
           </Grid>
         </Grid>      

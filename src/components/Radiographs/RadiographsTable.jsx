@@ -14,6 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import RadiographDetailsDialog from "./RadiographDetailsDialog";
 import EditRadiographDialog from "./EditRadiographDialog";
+import axios from "axios";
+import { Pagination } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,22 +36,35 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function RadiographsTable({
-  mockRadiographs,
-  doctors,
   radiographTypes,
 }) {
-  const [loading, setLoading] = useState(true);
   const [radiographs, setRadiographs] = useState([]);
   const [selectedRadiograph, setSelectedRadiograph] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   useEffect(() => {
-    setTimeout(() => {
-      setRadiographs(mockRadiographs);
-      setLoading(false);
-    }, 1000);
-  }, [mockRadiographs]);
+    fetchRays(page);
+  }, [page,radiographs]);
+
+  const fetchRays = (page) => {
+    axios
+      .get(`https://endtest.takeittechnology.tech/api/rays?page=${page}`)
+      .then((response) => {
+        setRadiographs(response.data.data);
+        console.log(response.data.data);
+        
+        setLastPage(response.data.meta.last_page);
+      })
+      .catch((error) => console.error("Error fetching:", error));
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
 
   const handleDetails = (radiograph) => {
     setSelectedRadiograph(radiograph);
@@ -72,13 +87,22 @@ export default function RadiographsTable({
     setSelectedRadiograph(null);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete record ID: ${id}`);
+  const handleDelete = async (id) => {
+    console.log(id);
+
+    try {
+      await axios.delete(
+        `https://endtest.takeittechnology.tech/api/rays/${id}`
+      );
+      setRadiographs((prev) =>
+        prev.filter((ray) => ray.id !== id)
+      );
+      console.log(`Deleted ID: ${id}`);
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -100,29 +124,18 @@ export default function RadiographsTable({
           <TableBody>
             {radiographs.map((radiograph) => (
               <StyledTableRow key={radiograph.id}>
-                <StyledTableCell>{radiograph.patient_name}</StyledTableCell>
+                <StyledTableCell>{radiograph.patient}</StyledTableCell>
                 <StyledTableCell align="right">
                   {radiograph.radiology_type}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  {radiograph.doctor_name}
+                  {radiograph.doctor}
                 </StyledTableCell>
                 <StyledTableCell align="right">
                   {radiograph.imaging_date}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  <span
-                    style={{
-                      color:
-                        radiograph.status === "Completed"
-                          ? "green"
-                          : radiograph.status === "Pending"
-                          ? "blue"
-                          : "black",
-                    }}
-                  >
                     {radiograph.status}
-                  </span>
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Tooltip title="View Details">
@@ -153,6 +166,14 @@ export default function RadiographsTable({
         </Table>
       </TableContainer>
 
+      <Pagination
+        count={lastPage}
+        page={page}
+        onChange={handlePageChange}
+        color="primary"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+      />
+
       {selectedRadiograph ? (
         <RadiographDetailsDialog
           open={openDetailsDialog}
@@ -166,7 +187,6 @@ export default function RadiographsTable({
           open={openEditDialog}
           handleClose={handleCloseEdit}
           radiograph={selectedRadiograph}
-          doctors={doctors}
           radiographTypes={radiographTypes}
         />
       ) : null}

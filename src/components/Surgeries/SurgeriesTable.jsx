@@ -14,6 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import SurgeryDetailsDialog from "./SurgeryDetailsDialog";
 import EditSurgeryDialog from "./EditSurgeryDialog";
+import axios from "axios";
+import { Pagination, TextField } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,19 +36,37 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-export default function SurgeriesTable({ mockSurgeries,doctors,surgeryTypes }) {
+export default function SurgeriesTable() {
   const [surgeries, setSurgeries] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState('');
   const [selectedSurgery, setSelectedSurgery] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   useEffect(() => {
-    setTimeout(() => {
-      setSurgeries(mockSurgeries);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    fetchSurgeries(page);
+  }, [page,date,surgeries]);
+
+  const fetchSurgeries = (page) => {
+    let url = `https://endtest.takeittechnology.tech/api/surgeries?page=${page}`
+    if (date) url =`https://endtest.takeittechnology.tech/api/surgeries/filter?date_scheduled=${date}`
+    axios
+      .get(url)
+      .then((response) => {
+        setSurgeries(response.data.data);
+        console.log(response.data.data);
+        
+        setLastPage(response.data.meta.last_page);
+      })
+      .catch((error) => console.error("Error fetching:", error));
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
 
   const handleDetails = (surgery) => {
     setSelectedSurgery(surgery);
@@ -60,16 +80,35 @@ export default function SurgeriesTable({ mockSurgeries,doctors,surgeryTypes }) {
     
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete surgery ID: ${id}`);
-  };
+  const handleDelete = async (id) => {
+    console.log(id);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    try {
+      await axios.delete(
+        `https://endtest.takeittechnology.tech/api/surgeries/${id}`
+      );
+      setSurgeries((prev) =>
+        prev.filter((surgery) => surgery.id !== id)
+      );
+      console.log(`Deleted ID: ${id}`);
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
+  };
 
   return (
     <>
+    <TextField
+          margin="dense"
+          label="Surgery Date"
+          type="date"
+          fullWidth
+          sx={{mb:2}}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          onChange={(e) => setDate(e.target.value)}
+        />
       <TableContainer
         component={Paper}
         style={{ width: "100%", overflowX: "auto" }}
@@ -91,32 +130,19 @@ export default function SurgeriesTable({ mockSurgeries,doctors,surgeryTypes }) {
               <StyledTableRow key={surgery.id}>
                 <StyledTableCell>{surgery.patient_name}</StyledTableCell>
                 <StyledTableCell align="right">
-                  {surgery.roomNumber}
+                  {surgery.room_number}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  {surgery.surgery_type}
+                  {surgery.type_surgery}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  {surgery.surgery_date}
+                  {surgery.date_scheduled}
                 </StyledTableCell>
                 <StyledTableCell align="right">
                   {surgery.doctor_name}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  <span
-                    style={{
-                      color:
-                        surgery.surgery_status === "Completed"
-                          ? "green"
-                          : surgery.surgery_status === "Scheduled"
-                          ? "blue"
-                          : surgery.surgery_status === "Canceled"
-                          ? "red"
-                          : "black",
-                    }}
-                  >
-                    {surgery.surgery_status}
-                  </span>
+                    {surgery.status_surgery}
                 </StyledTableCell>
 
                 <StyledTableCell align="center">
@@ -147,6 +173,14 @@ export default function SurgeriesTable({ mockSurgeries,doctors,surgeryTypes }) {
           </TableBody>
         </Table>
       </TableContainer>
+      {!date && 
+      <Pagination
+      count={lastPage}
+      page={page}
+      onChange={handlePageChange}
+      color="primary"
+      style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+    />}
 
       {selectedSurgery ? (
         <SurgeryDetailsDialog
@@ -161,8 +195,6 @@ export default function SurgeriesTable({ mockSurgeries,doctors,surgeryTypes }) {
           open={openEditDialog}
           handleClose={() => setOpenEditDialog(false)}
           surgery={selectedSurgery}
-          doctors={doctors}
-          surgeryTypes={surgeryTypes}
         />
       ) : null}
     </>

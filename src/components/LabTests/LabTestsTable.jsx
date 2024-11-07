@@ -14,6 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import TestDetailsDialog from "./TestDetailsDialog";
 import EditTestDialog from "./EditTestDialog";
+import { Pagination } from "@mui/material";
+import axios from "axios";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,20 +35,36 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function LabTestsTable({ mockTests, doctors, testNames }) {
+export default function LabTestsTable({testNames }) {
   const [tests, setTests] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedTest, setSelectedTest] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   useEffect(() => {
-    setTimeout(() => {
-      setTests(mockTests);
-      setLoading(false);
-    }, 1000);
-  }, [mockTests]);
+    fetchTests(page);
+  }, [page,tests]);
 
+  const fetchTests = (page) => {
+    axios
+      .get(`https://endtest.takeittechnology.tech/api/laboratories?page=${page}`)
+      .then((response) => {
+        setTests(response.data.data);
+        console.log(response.data.data);
+        
+        setLastPage(response.data.meta.last_page);
+      })
+      .catch((error) => console.error("Error fetching:", error));
+  };
+
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  
   const handleDetails = (test) => {
     setSelectedTest(test);
     setOpenDetailsDialog(true);
@@ -69,14 +87,21 @@ export default function LabTestsTable({ mockTests, doctors, testNames }) {
     setSelectedTest(null);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete test ID: ${id}`);
+  const handleDelete = async (id) => {
+    console.log(id);
+
+    try {
+      await axios.delete(
+        `https://endtest.takeittechnology.tech/api/laboratories/${id}`
+      );
+      setTests((prev) =>
+        prev.filter((test) => test.id !== id)
+      );
+      console.log(`Deleted ID: ${id}`);
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
   };
-
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -98,27 +123,18 @@ export default function LabTestsTable({ mockTests, doctors, testNames }) {
           <TableBody>
             {tests.map((test) => (
               <StyledTableRow key={test.id}>
-                <StyledTableCell>{test.patient_name}</StyledTableCell>
+                <StyledTableCell>{test.patient}</StyledTableCell>
                 <StyledTableCell align="right">
                   {test.test_name}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  {test.doctor_name}
+                  {test.doctor}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  {test.result_date}
+                  {test.test_date}
                 </StyledTableCell>
                 <StyledTableCell align="right">
-                  <span
-                    style={{
-                      color:
-                        test.status === "Completed"
-                          ? "green"
-                          :"blue"
-                    }}
-                  >
                     {test.status}
-                  </span>
                 </StyledTableCell>
                 <StyledTableCell align="center">
                   <Tooltip title="View Details">
@@ -148,6 +164,13 @@ export default function LabTestsTable({ mockTests, doctors, testNames }) {
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        count={lastPage}
+        page={page}
+        onChange={handlePageChange}
+        color="primary"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+      />
 
       {selectedTest ? (
               <TestDetailsDialog
@@ -162,7 +185,6 @@ export default function LabTestsTable({ mockTests, doctors, testNames }) {
                 open={openEditDialog}
                 handleClose={handleCloseEdit}
                 test={selectedTest}
-                doctors={doctors}
                 testNames={testNames}
               />
             ) : null}

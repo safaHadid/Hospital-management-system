@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -11,48 +11,121 @@ import {
   InputLabel,
   Select,
 } from "@mui/material";
+import axios from "axios";
 
-const EditSurgeryDialog = ({
-  open,
-  handleClose,
-  surgery,
-  doctors,
-  handleSave,
-  surgeryTypes
-}) => {
-  const [roomNumber, setRoomNumber] = useState(surgery.roomNumber);
-  const [surgeryType, setSurgeryType] = useState(surgery.surgery_type);
-  const [surgeryDate, setSurgeryDate] = useState(surgery.surgery_date);
-  const [doctorName, setDoctorName] = useState(surgery.doctor_name);
-  const [surgeryStatus, setSurgeryStatus] = useState(surgery.surgery_status);
+const surgeryTypes = [
+  "Appendectomy",
+  "Cholecystectomy",
+  "Hernia Repair",
+  "Knee Replacement",
+  "Hip Replacement",
+  "Coronary Bypass",
+  "Gallbladder Removal",
+  "Mastectomy",
+  "Prostatectomy",
+  "Laparoscopic Surgery",
+  "Cataract Surgery",
+  "Spinal Fusion",
+  "Carpal Tunnel Release",
+  "Bariatric Surgery",
+  "Endoscopy",
+  "Colonoscopy",
+];
 
-  const handleSaveClick = () => {
+const EditSurgeryDialog = ({ open, handleClose, surgery }) => {
+  const [roomNumber, setRoomNumber] = useState(surgery.room_number);
+  const [surgeryType, setSurgeryType] = useState(surgery.type_surgery);
+  const [surgeryDate, setSurgeryDate] = useState(surgery.date_scheduled);
+  const [doctorName, setDoctorName] = useState(surgery.doctor_name || '');
+  const [patientName, setPatientName] = useState(surgery.patient_name || '');
+  const [patientID, setPatientID] = useState(surgery.patient_id);
+  const [doctorID, setDoctorId] = useState(surgery.doctor_id);
+  const [roomID, setRoomId] = useState(surgery.room_id);
+  const [surgeryStatus, setSurgeryStatus] = useState(surgery.status_surgery);
+  const [rooms, setRooms] = useState([]);
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await axios.get(
+          `https://endtest.takeittechnology.tech/api/rooms`
+        );
+        setRooms(response.data.data);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+  useEffect(() => {
+    const fetchPatients = () => {
+      axios
+        .get(`https://endtest.takeittechnology.tech/api/patients`)
+        .then((response) => {
+          setPatients(response.data.data);
+        })
+        .catch((error) => console.error("Error fetching:", error));
+    };
+    fetchPatients();
+  }, []);
+
+  useEffect(() => {
+    const fetchDoctors = () => {
+      axios
+        .get(`https://endtest.takeittechnology.tech/api/doctors`)
+        .then((response) => {
+          setDoctors(response.data.data);
+        })
+        .catch((error) => console.error("Error fetching:", error));
+    };
+    fetchDoctors();
+  }, []);
+
+  const handleSaveClick = async () => {
     const editedSurgery = {
-      id: surgery.id,
-      patient_name: surgery.patient_name,
-      roomNumber: roomNumber,
-      surgery_type: surgeryType,
-      surgery_date: surgeryDate,
-      doctor_name: doctorName,
-      surgery_status: surgeryStatus,
+      patient_id: patientID,
+      room_id: roomID,
+      type_surgery: surgeryType,
+      date_scheduled: surgeryDate,
+      doctor_id: doctorID,
+      status_surgery: surgeryStatus,
     };
 
     console.log(editedSurgery);
-    handleClose();
+    try {
+      await axios.put(
+        `https://endtest.takeittechnology.tech/api/surgeries/${surgery.id}`,
+        editedSurgery,
+        { headers: { Accept: "application/json" } }
+      );
+      handleClose();
+    } catch (error) {
+      console.error("Error updating:", error);
+      alert("An error occurred.");
+    }
   };
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogTitle>Edit Surgery</DialogTitle>
       <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Room Number"
-          fullWidth
-          value={roomNumber}
-          onChange={(e) => setRoomNumber(e.target.value)}
-        />
+      <FormControl fullWidth margin="dense">
+          <InputLabel>Room Number</InputLabel>
+          <Select
+            value={roomNumber}
+            onChange={(e) => setRoomNumber(e.target.value)}
+          >
+            {rooms.map((room) => (
+              <MenuItem key={room.id} value={room.room_number} onClick={()=>{setRoomId(room.id)}}>
+                {room.room_number}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <FormControl fullWidth margin="dense">
           <InputLabel>Surgery Type</InputLabel>
@@ -81,14 +154,29 @@ const EditSurgeryDialog = ({
         />
 
         <FormControl fullWidth margin="dense">
+          <InputLabel>Patient Name</InputLabel>
+          <Select
+            value={patientName}
+          >
+            {patients.map((patient) => (
+              <MenuItem key={patient.id} value={`${patient.first_name} ${patient.last_name}`} onClick={()=>{setPatientID(patient.id); console.log(patient.id);
+              }}>
+                {patient.first_name} {patient.last_name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth margin="dense">
           <InputLabel>Doctor Name</InputLabel>
           <Select
             value={doctorName}
             onChange={(e) => setDoctorName(e.target.value)}
           >
             {doctors.map((doctor, index) => (
-              <MenuItem key={index} value={doctor}>
-                {doctor}
+              <MenuItem key={index} value={`${doctor.first_name} ${doctor.last_name}`} onClick={()=>{setDoctorId(doctor.id); console.log(doctor.id);
+              }} > 
+                {doctor.first_name} {doctor.last_name}
               </MenuItem>
             ))}
           </Select>
@@ -100,9 +188,9 @@ const EditSurgeryDialog = ({
             value={surgeryStatus}
             onChange={(e) => setSurgeryStatus(e.target.value)}
           >
-            <MenuItem value="Scheduled">Scheduled</MenuItem>
-            <MenuItem value="Completed">Completed</MenuItem>
-            <MenuItem value="Canceled">Canceled</MenuItem>
+            <MenuItem value="scheduled">Scheduled</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="cancelled">Canceled</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>

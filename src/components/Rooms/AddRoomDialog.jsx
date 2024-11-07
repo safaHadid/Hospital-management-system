@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -11,42 +11,48 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { addRoom } from "../../redux/roomsSlice";
+import axios from "axios";
 
 const AddRoomDialog = ({ open, handleClose }) => {
   const [roomNumber, setRoomNumber] = useState("");
   const [roomType, setRoomType] = useState("");
   const [roomStatus, setRoomStatus] = useState("");
-  const [departmentName, setDepartmentName] = useState("");
-
-  const dispatch = useDispatch();
+  const [departmentID, setDepartmentID] = useState("");
+  const [departments , setDepartments] = useState([]);
 
   const StatusOfRoom = ["Available", "Occupied", "Under Maintenance"];
   const TypeOfRoom = ["ICU", "Private", "Shared"];
 
-  const departments = useSelector((state)=>state.room.departments);
 
-  const handleSubmit = () => {
-    if(roomNumber && roomType && roomStatus && departmentName){
+  useEffect(() => {
+    axios.get('https://endtest.takeittechnology.tech/api/departments')
+        .then((response) => setDepartments(response.data.data))
+        .catch((error) => console.error("Error fetching departments:", error));
+}, []);
+
+  const handleSubmit = async () => {
       const newRoom = {
-        id: Date.now(),
         room_number: roomNumber,
-        room_type: roomType,
+        type: roomType,
         status: roomStatus,
-        department_name: departmentName,
+        department_id: departmentID,
       };
-      dispatch(addRoom(newRoom));
-      console.log(newRoom);
-      setDepartmentName('');
-      setRoomNumber('');
-      setRoomStatus('');
-      setRoomType('');
-      handleClose();
-    } else {
-      alert('Please fill all fields.');
-    }
-    handleClose();
+
+      try {
+        await axios.post(
+          "https://endtest.takeittechnology.tech/api/rooms",
+          newRoom
+        );
+        setRoomNumber("");
+          setRoomType("");
+          setRoomStatus("");
+          setDepartmentID("");
+          handleClose();
+      }
+      catch (error) {
+        console.error("Error adding room:", error);
+        alert("An error occurred while adding the room.");
+      }
   };
 
   return (
@@ -93,8 +99,8 @@ const AddRoomDialog = ({ open, handleClose }) => {
         <FormControl fullWidth margin="dense">
           <InputLabel>Department</InputLabel>
           <Select
-            value={departmentName}
-            onChange={(e) => setDepartmentName(e.target.value)}
+            value={departmentID}
+            onChange={(e) => setDepartmentID(e.target.value)}
           >
             {departments.map((department, index) => (
               <MenuItem key={index} value={department.id}>
